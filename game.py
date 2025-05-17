@@ -4,13 +4,16 @@ window = pygame.display.set_mode((800, 500))
 background = pygame.image.load("realistic-polygonal-background_23-2148922432.jpg")
 #window.fill((0, 0, 0))
 clock = pygame.time.Clock()
-
+#pygame.mixer.musik.load("")
+#pygame.mixer.music.play(-1)
 class GameSprite():
-    def __init__(self, x=0, y=0, width=10, height=10, step=0, image_sorite=""):
+    def __init__(self, x=0, y=0, width=10, height=10, step=0, image_sprite=""):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.x=x
+        self.y=y
         self.image =pygame.image.load(image_sprite)
         self.image =pygame.transform.scale(self.image, (self.width, self.height))
         self.step = step
@@ -26,12 +29,48 @@ class GameSprite():
             self.x -= self.step
         if keys[pygame.K_d]:
             self.x += self.step
-player = GameSprite(100, 100, 100, 100, 10, "pngwing.com.png")
+#
+class Player2(GameSprite):
+    def draw(self, x, y,):
+        window.blit(self.image, (self.x, self.y))  
+    def __init__(self, x=0, y=0, width=10, height=10, step=0, image_sprite=""):
+        super().__init__(x, y, width, height, step, image_sprite)
+        self.image = pygame.image.load(image_sprite)
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+    def updute(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            self.y -= self.step
+        if keys[pygame.K_DOWN]:
+            self.y += self.step
+        if keys[pygame.K_LEFT]:
+            self.x -= self.step
+        if keys[pygame.K_RIGHT]:
+            self.x += self.step
+        Player2 = GameSprite(100, 100, 100, 100, 10, "pngwing.com1.png")
+Player = GameSprite(100, 100, 100, 100, 10, "pngwing.com.png")
+
+
 game=True
 while game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-    player.draw(100, 100)
+            Player.draw(100, 100)
+    clock.tick(40)
     window.blit(background, (0, 0))
     pygame.display.update()
     clock.tick(40)
+#def collide(self, other):
+#    if self.rect.colliderect(self.x, self.y):
+#        self.kill()
+def move(self):
+    self.x += self.speed_x
+    self.y += self.speed_y
+
+    if self.x < self.radius or self.x >= window_width - self.radius:
+        self.speed_x *= -1
+    if self.y < self.radius:
+        self.speed_y *= -1
