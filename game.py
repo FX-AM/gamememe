@@ -31,13 +31,20 @@ class GameSprite:
 class Player(GameSprite):
     def update(self, up_key, down_key):
         keys = pygame.key.get_pressed()
+        # Переміщення гравця вгору і вниз   
+        if keys[pygame.K_ESCAPE]:
+            pygame.quit()
+            exit()
+        if keys[pygame.K_UP] and self.y > 0:
+            self.y -= self.step
+        if keys[pygame.K_DOWN] and self.y + self.height < HEIGHT:
+            self.y += self.step
         if keys[up_key] and self.y > 0:
             self.y -= self.step
         if keys[down_key] and self.y + self.height < HEIGHT:
             self.y += self.step
         self.rect.topleft = (self.x, self.y)
-
-# Клас м'яча
+# Клас цегли (м'яч)
 class Brick(GameSprite):
     def __init__(self, x, y, width, height, step, image_sprite, speed_x, speed_y):
         super().__init__(x, y, width, height, step, image_sprite)
@@ -62,7 +69,7 @@ class Brick(GameSprite):
         if self.rect.colliderect(player.rect):
             self.speed_x *= -1
 
-# Ініціалізація гравця і м'яча
+# Ініціалізація гравця і цегли
 player = Player(50, HEIGHT//2 - 100, 85, 100, 7, "pngwing.com.png")
 brick = Brick(WIDTH//2, HEIGHT//2, 50, 50, 0, "brick.png", speed_x=5, speed_y=5)
 
@@ -72,7 +79,7 @@ big_font = pygame.font.SysFont('Arial', 60)
 
 hearts = 3
 remaining_time = 60
-# Початковий час у мілісекундах
+# Таймер
 start_ticks = pygame.time.get_ticks()
 
 game = True
@@ -85,7 +92,7 @@ while game:
     player.update(pygame.K_w, pygame.K_s)
     brick.move()
 
-    # Перевірка зіткнення м'яча і ракетки
+    # Перевірка зіткнення цегли і ракетки
     brick.check_collision(player)
 
 
@@ -103,6 +110,7 @@ while game:
     # Відображення рахунку
     heartss = font.render(f"Життя: {hearts} ", True, (255, 255, 255))
     window.blit(heartss, (WIDTH//2 - heartss.get_width()//2, 20))
+    
     # Відображення часу
     time_text = font.render(f"Час: {remaining_time}", True, (255, 255, 255))
     window.blit(time_text, (10, 10))
@@ -111,15 +119,22 @@ while game:
     seconds_passed = (pygame.time.get_ticks() - start_ticks) / 1000
     remaining_time = max(0, 60 - int(seconds_passed))
 
+    # Відображення часу на екрані
     if remaining_time == 0:
         win = big_font.render("Ти виграв!", True, (0, 255, 0))
         window.blit(win, (WIDTH//2 - win.get_width()//2, HEIGHT//2 - win.get_height()//2))
-        
-    # Якщо життя закінчилися, показуємо текст
+    
+    
+    # Якщо життя закінчилися, показуємо повідомлення про кінець гри
     if hearts <= 0:
         game_over_text = big_font.render("Гра закінчена!", True, (255, 0, 0))
         window.blit(game_over_text, (WIDTH//2 - game_over_text.get_width()//2, HEIGHT//2 - game_over_text.get_height()//2))
-        
+
+    #Щоб життя не йшло в мінус
+    while hearts <= 0:
+        hearts -=10
+        remaining_time += 50
+    # Оновлюємо екран
     pygame.display.update()
     clock.tick(60)
 
